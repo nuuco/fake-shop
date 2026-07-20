@@ -20,3 +20,4 @@
 - 헤더 글라스: backdrop-filter blur + 반투명 배경
 - 모바일 헤더: Shop/Cart/Login/Logout 아이콘 내비로 축약
 - 푸터 2단 구성·장식용 수평선 제거·토마토 그라데이션 제거
+- favicon: Tomato Market 토마토 아이콘으로 교체
