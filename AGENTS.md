@@ -20,4 +20,7 @@
 - 헤더 글라스: backdrop-filter blur + 반투명 배경
 - 모바일 헤더: Shop/Cart/Login/Logout 아이콘 내비로 축약
 - 푸터 2단 구성·장식용 수평선 제거·토마토 그라데이션 제거
-- favicon: Tomato Market 토마토 아이콘으로 교체
+- 최종 README·UI 대조: 기능 체크리스트 일치, 구 UI 문구·스크린샷 갱신 필요 항목 정리
+- 스크린샷 재촬영: products/auth/cart/error-empty 최신 UI로 교체, 실로그인 테스트 반영
+- 배포 URL 반영: https://tomato-market-one.vercel.app/
+- Vercel SPA 라우팅: vercel.json rewrite로 /cart·/login 새로고침 404 방지
