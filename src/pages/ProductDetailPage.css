@@ -58,6 +58,12 @@
   font-size: 1rem;
 }
 
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 @media (max-width: 800px) {
   .detail__layout {
     grid-template-columns: 1fr;

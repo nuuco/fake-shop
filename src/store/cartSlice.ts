@@ -39,8 +39,11 @@ export function persistCart(items: CartItem[]) {
   }
 }
 
+export type AddToCartPayload = Pick<Product, 'id' | 'title' | 'price' | 'image'>
+
 type CartState = {
   items: CartItem[]
+  lastAdded: AddToCartPayload | null
 }
 
 type CartRootState = {
@@ -49,9 +52,8 @@ type CartRootState = {
 
 const initialState: CartState = {
   items: loadCartFromStorage(),
+  lastAdded: null,
 }
-
-export type AddToCartPayload = Pick<Product, 'id' | 'title' | 'price' | 'image'>
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -61,15 +63,19 @@ const cartSlice = createSlice({
       const existing = state.items.find((item) => item.productId === action.payload.id)
       if (existing) {
         existing.quantity += 1
-        return
+      } else {
+        state.items.push({
+          productId: action.payload.id,
+          title: action.payload.title,
+          price: action.payload.price,
+          image: action.payload.image,
+          quantity: 1,
+        })
       }
-      state.items.push({
-        productId: action.payload.id,
-        title: action.payload.title,
-        price: action.payload.price,
-        image: action.payload.image,
-        quantity: 1,
-      })
+      state.lastAdded = action.payload
+    },
+    clearLastAdded(state) {
+      state.lastAdded = null
     },
     increase(state, action: PayloadAction<number>) {
       const item = state.items.find((i) => i.productId === action.payload)
@@ -87,10 +93,15 @@ const cartSlice = createSlice({
     removeItem(state, action: PayloadAction<number>) {
       state.items = state.items.filter((i) => i.productId !== action.payload)
     },
+    clearCart(state) {
+      state.items = []
+      state.lastAdded = null
+    },
   },
 })
 
-export const { addItem, increase, decrease, removeItem } = cartSlice.actions
+export const { addItem, clearLastAdded, increase, decrease, removeItem, clearCart } =
+  cartSlice.actions
 export const cartReducer = cartSlice.reducer
 
 export const selectCartItems = (state: CartRootState) => state.cart.items
@@ -100,3 +111,8 @@ export const selectCartTotal = (state: CartRootState) =>
 
 export const selectCartCount = (state: CartRootState) =>
   state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+
+export const selectLastAdded = (state: CartRootState) => state.cart.lastAdded
+
+export const selectIsInCart = (productId: number) => (state: CartRootState) =>
+  state.cart.items.some((item) => item.productId === productId)

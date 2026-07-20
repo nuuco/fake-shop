@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchProductById } from '../services/productApi'
 import type { Product } from '../types/product'
-import { useAppDispatch } from '../store/hooks'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addItem } from '../store/cartSlice'
 import { formatPrice } from '../utils/format'
 import { handleImageError } from '../utils/image'
@@ -13,9 +13,14 @@ export function ProductDetailPage() {
   const dispatch = useAppDispatch()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
+  const productId = Number(id)
+  const inCart = useAppSelector((state) =>
+    Number.isFinite(productId)
+      ? state.cart.items.some((item) => item.productId === productId)
+      : false,
+  )
 
   useEffect(() => {
-    const productId = Number(id)
     if (!Number.isFinite(productId)) {
       setProduct(null)
       setLoading(false)
@@ -38,7 +43,7 @@ export function ProductDetailPage() {
       })
 
     return () => controller.abort()
-  }, [id])
+  }, [productId])
 
   if (loading) {
     return (
@@ -84,22 +89,27 @@ export function ProductDetailPage() {
             <h1>{product.title}</h1>
             <p className="detail__price">{formatPrice(product.price)}</p>
             <p className="detail__desc">{product.description}</p>
-            <button
-              type="button"
-              className="btn btn--primary"
-              onClick={() =>
-                dispatch(
-                  addItem({
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.image,
-                  }),
-                )
-              }
-            >
-              장바구니 담기
-            </button>
+            <div className="detail__actions">
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() =>
+                  dispatch(
+                    addItem({
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      image: product.image,
+                    }),
+                  )
+                }
+              >
+                {inCart ? '장바구니 담기 제품' : '장바구니 담기'}
+              </button>
+              <Link to="/cart" className="btn btn--ghost">
+                장바구니 이동
+              </Link>
+            </div>
           </div>
         </div>
       </article>

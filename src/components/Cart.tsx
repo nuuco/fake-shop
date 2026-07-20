@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
+  clearCart,
   decrease,
   increase,
   removeItem,
@@ -109,6 +110,13 @@ export function Cart() {
           이 장바구니는 브라우저에 저장되며, 실제 결제 기능은 포함되지 않습니다.
         </p>
         <div className="cart__summary-actions">
+          <button
+            type="button"
+            className="btn btn--primary cart__checkout"
+            onClick={() => dispatch(clearCart())}
+          >
+            계산하기
+          </button>
           <Link to="/" className="cart__continue">
             ← Continue shopping
           </Link>

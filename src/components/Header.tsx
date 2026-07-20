@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
-import { useAppSelector } from '../store/hooks'
-import { selectCartCount } from '../store/cartSlice'
-import { maskEmail } from '../utils/format'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { clearLastAdded, selectCartCount, selectLastAdded } from '../store/cartSlice'
+import { formatPrice, maskEmail } from '../utils/format'
+import { handleImageError } from '../utils/image'
 import './Header.css'
 
 type HeaderProps = {
@@ -87,6 +88,8 @@ function IconLogout() {
 
 export function Header({ brand }: HeaderProps) {
   const cartCount = useAppSelector(selectCartCount)
+  const lastAdded = useAppSelector(selectLastAdded)
+  const dispatch = useAppDispatch()
   const { status, user, logout } = useAuthContext()
   const [scrolled, setScrolled] = useState(false)
   const displayName = user?.displayName ?? maskEmail(user?.email ?? null) ?? '회원'
@@ -97,6 +100,14 @@ export function Header({ brand }: HeaderProps) {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!lastAdded) return
+    const timer = window.setTimeout(() => {
+      dispatch(clearLastAdded())
+    }, 4000)
+    return () => window.clearTimeout(timer)
+  }, [lastAdded, dispatch])
 
   return (
     <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
@@ -112,13 +123,44 @@ export function Header({ brand }: HeaderProps) {
             </span>
           </Link>
 
-          <Link to="/cart" className="site-header__link site-header__cart" aria-label={`Cart (${cartCount})`}>
-            <span className="site-header__label">Cart ({cartCount})</span>
-            <span className="site-header__icon site-header__icon--cart">
-              <IconCart />
-              {cartCount > 0 && <span className="site-header__count">{cartCount}</span>}
-            </span>
-          </Link>
+          <div className="site-header__cart-wrap">
+            <Link
+              to="/cart"
+              className="site-header__link site-header__cart"
+              aria-label={`Cart (${cartCount})`}
+            >
+              <span className="site-header__label">Cart ({cartCount})</span>
+              <span className="site-header__icon site-header__icon--cart">
+                <IconCart />
+                {cartCount > 0 && <span className="site-header__count">{cartCount}</span>}
+              </span>
+            </Link>
+
+            {lastAdded && (
+              <div className="cart-preview" role="status" aria-live="polite">
+                <p className="cart-preview__eyebrow">장바구니에 추가됨</p>
+                <div className="cart-preview__body">
+                  <img
+                    src={lastAdded.image}
+                    alt=""
+                    className="cart-preview__thumb"
+                    onError={(event) => handleImageError(event, 64)}
+                  />
+                  <div className="cart-preview__info">
+                    <p className="cart-preview__title">{lastAdded.title}</p>
+                    <p className="cart-preview__price">{formatPrice(lastAdded.price)}</p>
+                  </div>
+                </div>
+                <Link
+                  to="/cart"
+                  className="cart-preview__cta"
+                  onClick={() => dispatch(clearLastAdded())}
+                >
+                  장바구니로 이동
+                </Link>
+              </div>
+            )}
+          </div>
 
           {status === 'loading' && <span className="site-header__muted">…</span>}
 
