@@ -62,6 +62,7 @@ select:focus-visible {
 }
 
 .app-shell {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -176,8 +177,6 @@ select:focus-visible {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
   background: transparent;
 }
 
@@ -185,11 +184,6 @@ select:focus-visible {
   margin: 0;
   flex: 1;
   font-size: 0.9375rem;
-}
-
-.banner--warn,
-.banner--error {
-  border-color: var(--line);
 }
 
 @keyframes fade-up {
