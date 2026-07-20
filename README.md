@@ -18,21 +18,12 @@
 ### 결과 예시와 다른 점
 
 - 참고한 기능 흐름: 상품 목록 → 담기 → 전역 cart·총액 → Firebase 로그인·로그아웃
-- 다르게 설계한 UI·기능: 브랜드명 **Tomato Market**, 유어마인드형 미니멀(흰 배경·큰 Inter 타이포·무카드 그리드·글라스 헤더), 검색·필터·상세·LocalStorage·모바일 아이콘 내비
+- 다르게 설계한 UI·기능: 브랜드명 **Tomato Market**, 유어마인드형 미니멀(흰 배경·큰 Inter 타이포·무카드 그리드·글라스 헤더), Google·이메일 로그인, 검색·필터·상세·LocalStorage·담기 미리보기·계산하기
 - 복제하지 않은 이미지·브랜드·문구: 결과 예시의 브랜드·레이아웃·문구를 그대로 쓰지 않음
 
 ## 2. 실행 화면
 
-| 화면 | 파일·링크 | 설명 |
-|---|---|---|
-| 상품 목록·로딩 | [screenshots/products.png](./screenshots/products.png) | Fake Store API 목록, 검색·필터, 담기 |
-| 로그인·인증 상태 | [screenshots/auth.png](./screenshots/auth.png) | Google 로그인 UI, `.env` 미설정 안내 |
-| 장바구니·총액 | [screenshots/cart.png](./screenshots/cart.png) | 수량·삭제·총액($132.25) |
-| 오류·빈 상태·선택 기능 | [screenshots/error-empty.png](./screenshots/error-empty.png) | 검색 0건 안내 |
-
-![상품 목록](./screenshots/products.png)
-![로그인 상태](./screenshots/auth.png)
-![장바구니](./screenshots/cart.png)
+실행 캡처는 문서 하단 [실행 화면 캡처](#실행-화면-캡처)에 모아 두었습니다.
 
 ### 실시간 응시와 최종 보완 비교
 
@@ -40,7 +31,7 @@
 |---|---|---|---|
 | 데이터·상태·인증 설계 | 해당 없음(실시간 미응시) | product·cartItem·authUser 정의 | README·타입 파일에 반영 |
 | 전역 장바구니 | 해당 없음 | Redux Toolkit cartSlice 완료 | 수량·삭제·배지·총액 |
-| Firebase 인증 | 해당 없음 | Google 로그인 흐름 완료 | 실로그인·로그아웃 확인 완료 |
+| Firebase 인증 | 해당 없음 | Google·이메일 로그인 흐름 완료 | 실로그인·로그아웃 확인 완료 |
 | 상품 API·대체 경로 | 해당 없음 | API + 8초 timeout mock 대체 | 재시도 버튼 |
 | README·테스트 | 해당 없음 | 템플릿 §1~17 작성 | 캡처·오류·AI 기록 |
 
@@ -191,7 +182,7 @@
 |---|---|---|---|
 | UI | React | ^19.2.7 | 컴포넌트·이벤트 |
 | 전역 상태 | Redux Toolkit + React Redux | ^2.12.0 / ^9.3.0 | 전역 cart |
-| 인증 | Firebase Authentication | ^12.16.0 | Google 로그인 |
+| 인증 | Firebase Authentication | ^12.16.0 | Google·이메일/비밀번호 로그인 |
 | 상품 데이터 | Fake Store API / mock | - | 표준 경로 |
 | 라우팅 | React Router | ^7.18.1 | 목록·상세·cart·login |
 | 스타일 | CSS (변수·모듈형 파일) | - | 브랜드 UI |
@@ -206,7 +197,7 @@
 - Node.js: 20+ (개발 환경 v25.6.1에서 확인)
 - 패키지 관리자: npm
 - 브라우저: Chrome 등 최신 브라우저
-- Firebase 인증 제공자: Google
+- Firebase 인증 제공자: Google, Email/Password
 - Firebase Authorized Domain 확인: Firebase Console → Authentication → Settings → Authorized domains에 `localhost` 포함
 
 ### 설치와 실행
@@ -422,3 +413,12 @@ React 쇼핑몰 과제를 시작합니다.
 | 결과물 레포 URL | https://github.com/nuuco/fake-shop |
 | 실행·배포 URL | https://tomato-market-one.vercel.app/ |
 | 제출 폼 | https://goor.me/aiswwork1 |
+
+## 실행 화면 캡처
+
+| 화면 | 설명 | 캡처 |
+|---|---|---|
+| 상품 목록 | Fake Store API 목록, 검색·카테고리 필터, 담기 | ![상품 목록](./screenshots/products.png) |
+| 로그인·인증 | 이메일·비밀번호 + Google 로그인 | ![로그인](./screenshots/auth.png) |
+| 장바구니·총액 | 수량·삭제·총액·계산하기 (로그인 상태) | ![장바구니](./screenshots/cart.png) |
+| 빈 장바구니 | 빈 cart 안내·Continue shopping | ![빈 장바구니](./screenshots/error-empty.png) |

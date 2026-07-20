@@ -26,3 +26,5 @@
 - Vercel SPA 라우팅: vercel.json rewrite로 /cart·/login 새로고침 404 방지
 - 결과 예시 맞춤: 상세 담기 문구·장바구니 이동, 헤더 담기 미리보기, 계산하기(clearCart)
 - 이메일/비밀번호 로그인·회원가입: Firebase Auth + 폼 검증(빨간 안내·연두 체크)
+- 스크린샷 교체: 사용자 캡처로 products/auth/cart/error-empty 갱신, README 하단 테이블 인라인 표시
+- README 최신화: 이메일 로그인·계산하기·담기 미리보기 등 최신 기능 반영
