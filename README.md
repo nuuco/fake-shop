@@ -56,7 +56,7 @@
 | 전역 상태관리 라이브러리 | ☑ 완료 / □ 부분 / □ 미완료 | Redux DevTools/담기 후 Header 배지 | RTK |
 | 장바구니 담기·목록 | ☑ 완료 / □ 부분 / □ 미완료 | `/cart` | cartSlice |
 | 총액 계산 | ☑ 완료 / □ 부분 / □ 미완료 | 수기 계산과 비교 | selector |
-| Firebase 로그인 | ☑ 완료 / □ 부분 / □ 미완료 | `/login` Google 버튼 | `.env` 필요 |
+| Firebase 로그인 | ☑ 완료 / □ 부분 / □ 미완료 | `/login` Google·이메일 로그인 | `.env` 필요 |
 | 인증 초기·사용자 상태 | ☑ 완료 / □ 부분 / □ 미완료 | 확인 중… → 로그인/비로그인 | AuthContext |
 | 로그인 오류·로그아웃 | ☑ 완료 / □ 부분 / □ 미완료 | 실패 메시지·Header 로그아웃 | useAuth |
 
@@ -71,7 +71,7 @@
 | 인증 로딩 UX | ☑ 완료 / □ 미구현 | loading 중 로그인 오표시 방지 |
 | 로그인 전후 UI | ☑ 완료 / □ 미구현 | 비로그인: Login / 로그인: 이니셜 아바타·Logout |
 
-추가 구현: 상품 상세(`/product/:id`) — 설명·카테고리·담기
+추가 구현: 상품 상세(`/product/:id`) — 담기 상태 문구·장바구니 이동, 헤더 담기 미리보기, 계산하기로 cart 비우기
 
 ### 도전 기능
 
@@ -139,8 +139,10 @@
 | action | addItem | 담기·중복 시 수량+1 | 같은 상품 두 번 담기 |
 | action | increase / decrease | 수량 변경 | 총액 동시 변경 |
 | action | removeItem | 항목 삭제 | 다른 항목 유지 |
+| action | clearCart | 계산하기로 전체 비우기 | 빈 장바구니 UI |
 | selector | selectCartItems | 목록 | `/cart` |
 | selector | selectCartTotal / selectCartCount | 총액·배지 | 수기 계산 |
+| selector | selectLastAdded | 헤더 담기 미리보기 | 담기 직후 표시 |
 
 ### 장바구니 정책
 
@@ -154,7 +156,7 @@
 
 ## 6. Firebase Authentication
 
-- 로그인 방식: Google (`signInWithPopup`)
+- 로그인 방식: Google (`signInWithPopup`) + 이메일/비밀번호 (`signInWithEmailAndPassword` / `createUserWithEmailAndPassword`)
 - 인증 상태 관리 위치: `AuthProvider` + `useAuth` (`onAuthStateChanged` 단일 listener)
 - 로그인 성공 화면: `/`로 이동, Header에 이니셜 아바타(호버 시 닉네임) + Logout
 - 로그인 실패 안내: 오류 배너 메시지

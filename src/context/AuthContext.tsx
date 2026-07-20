@@ -7,6 +7,8 @@ type AuthContextValue = {
   user: AuthUser | null
   errorMessage: string | null
   loginWithGoogle: () => Promise<void>
+  loginWithEmail: (email: string, password: string) => Promise<void>
+  signupWithEmail: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   isConfigured: boolean
 }

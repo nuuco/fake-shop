@@ -24,3 +24,5 @@
 - 스크린샷 재촬영: products/auth/cart/error-empty 최신 UI로 교체, 실로그인 테스트 반영
 - 배포 URL 반영: https://tomato-market-one.vercel.app/
 - Vercel SPA 라우팅: vercel.json rewrite로 /cart·/login 새로고침 404 방지
+- 결과 예시 맞춤: 상세 담기 문구·장바구니 이동, 헤더 담기 미리보기, 계산하기(clearCart)
+- 이메일/비밀번호 로그인·회원가입: Firebase Auth + 폼 검증(빨간 안내·연두 체크)
