@@ -29,29 +29,24 @@ export function Header({ brand }: HeaderProps) {
           {brand}
         </Link>
         <nav className="site-header__nav" aria-label="주요 메뉴">
-          <Link to="/">상품</Link>
+          <Link to="/">Shop</Link>
           <Link to="/cart" className="site-header__cart">
-            장바구니
-            {cartCount > 0 && (
-              <span className="site-header__badge" aria-label={`장바구니 ${cartCount}개`}>
-                {cartCount}
-              </span>
-            )}
+            Cart{cartCount > 0 ? ` (${cartCount})` : ' (0)'}
           </Link>
-          {status === 'loading' && <span className="site-header__muted">인증 확인 중…</span>}
+          {status === 'loading' && <span className="site-header__muted">…</span>}
           {status !== 'loading' && user && (
             <div className="site-header__user">
               <span className="site-header__name">
                 {user.displayName ?? maskEmail(user.email) ?? '회원'}
               </span>
-              <button type="button" className="btn btn--ghost" onClick={() => void logout()}>
-                로그아웃
+              <button type="button" className="btn--login" onClick={() => void logout()}>
+                Logout
               </button>
             </div>
           )}
           {status !== 'loading' && !user && (
-            <Link to="/login" className="btn btn--primary btn--small">
-              로그인
+            <Link to="/login" className="btn--login">
+              Login
             </Link>
           )}
         </nav>

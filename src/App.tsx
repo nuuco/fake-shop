@@ -1,19 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
+import { Footer } from './components/Footer'
 import { AuthProvider } from './context/AuthContext'
 import { HomePage } from './pages/HomePage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
 import { CartPage } from './pages/CartPage'
 import { LoginPage } from './pages/LoginPage'
-
-const BRAND = 'NUUCO Market'
+import { BRAND_NAME } from './constants/brand'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <div className="app-shell">
-          <Header brand={BRAND} />
+          <Header brand={BRAND_NAME} />
           <main className="app-main">
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -22,9 +22,7 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
             </Routes>
           </main>
-          <footer className="app-footer">
-            <p>과제 6 · React 쇼핑몰 · 결제·주문 기능 없음</p>
-          </footer>
+          <Footer />
         </div>
       </BrowserRouter>
     </AuthProvider>

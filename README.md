@@ -18,7 +18,7 @@
 ### 결과 예시와 다른 점
 
 - 참고한 기능 흐름: 상품 목록 → 담기 → 전역 cart·총액 → Firebase 로그인·로그아웃
-- 다르게 설계한 UI·기능: 브랜드명 **NUUCO Market**, Syne/Outfit 타이포, 청록 액센트, 검색·카테고리 필터·상품 상세·LocalStorage 복원
+- 다르게 설계한 UI·기능: 브랜드명 **Tomato Market**, 유어마인드형 미니멀(크림 배경·작은 타이포·카드 없음), 검색·필터·상세·LocalStorage
 - 복제하지 않은 이미지·브랜드·문구: 결과 예시의 브랜드·레이아웃·문구를 그대로 쓰지 않음
 
 ## 2. 실행 화면
@@ -373,7 +373,7 @@ React 쇼핑몰 과제를 시작합니다.
 |---|---|---|
 | Fake Store API | https://fakestoreapi.com/products | 상품 데이터 실습 |
 | 결과 예시 | https://drive.google.com/file/d/1fUeCYpSu0H_BU154iN7t1IHM37cDo6mz/view?usp=sharing | 기능 흐름 참고 |
-| Google Fonts | Syne, Outfit | UI 타이포 |
+| Google Fonts | Noto Sans KR | UI 타이포 |
 
 ## 16. 배운 점·한계·다음 개선
 

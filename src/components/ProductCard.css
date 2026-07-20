@@ -1,73 +1,87 @@
 .product-card {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  animation: rise-in 0.45s ease both;
+  height: 100%;
+  gap: 0.9rem;
 }
 
 .product-card__media {
   display: block;
-  aspect-ratio: 1;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.7), transparent),
-    var(--surface);
-  border: 1px solid var(--line);
+  background: transparent;
 }
 
 .product-card__media img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 1.25rem;
-  transition: transform 0.35s ease;
+  object-position: center;
+  padding: 0.5rem;
+  transition: opacity 0.2s ease;
 }
 
 .product-card:hover .product-card__media img,
 .product-card:focus-within .product-card__media img {
-  transform: scale(1.04);
+  opacity: 0.85;
 }
 
 .product-card__body {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.25rem;
   flex: 1;
-}
-
-.product-card__category {
-  margin: 0;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
+  text-align: left;
 }
 
 .product-card__title {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.35;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.45;
+  min-height: calc(1.45em * 2);
 }
 
 .product-card__title a {
   color: var(--ink);
   text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .product-card__title a:hover,
 .product-card__title a:focus-visible {
-  color: var(--accent);
+  opacity: 0.55;
 }
 
 .product-card__price {
-  margin: 0 0 0.35rem;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
+  margin: 0.2rem 0 0.4rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
   color: var(--ink);
 }
 
-.product-card .btn {
-  margin-top: auto;
+.product-card__add {
+  appearance: none;
   align-self: flex-start;
+  margin-top: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.product-card__add:hover,
+.product-card__add:focus-visible {
+  color: var(--ink);
 }

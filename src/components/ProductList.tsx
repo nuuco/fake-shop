@@ -7,6 +7,11 @@ type ProductListProps = {
   products: Product[]
 }
 
+function formatCategoryLabel(category: string): string {
+  if (category === 'all') return 'All'
+  return category
+}
+
 export function ProductList({ products }: ProductListProps) {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
@@ -16,47 +21,56 @@ export function ProductList({ products }: ProductListProps) {
     return ['all', ...Array.from(set).sort()]
   }, [products])
 
+  const trimmedQuery = query.trim()
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
+    const q = trimmedQuery.toLowerCase()
     return products.filter((product) => {
       const matchCategory = category === 'all' || product.category === category
       const matchQuery = !q || product.title.toLowerCase().includes(q)
       return matchCategory && matchQuery
     })
-  }, [products, query, category])
-
-  const queryValid = query.trim().length === 0 || query.trim().length >= 1
+  }, [products, trimmedQuery, category])
 
   return (
     <section className="product-list">
-      <div className="product-list__filters">
-        <label className="field">
-          <span className="field__label">상품 검색</span>
-          <div className={`field__control ${queryValid ? 'field__control--ok' : 'field__control--error'}`}>
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="상품명으로 검색"
-              aria-invalid={!queryValid}
-            />
-            {queryValid && query.trim().length > 0 && (
-              <span className="field__icon" aria-hidden="true">
-                ✓
-              </span>
-            )}
-          </div>
-        </label>
-        <label className="field">
-          <span className="field__label">카테고리</span>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c === 'all' ? '전체' : c}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="product-list__toolbar">
+        <div className="product-list__search">
+          <label className="visually-hidden" htmlFor="product-search">
+            상품 검색
+          </label>
+          <input
+            id="product-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search"
+          />
+          {trimmedQuery.length > 0 && (
+            <button
+              type="button"
+              className="product-list__clear"
+              onClick={() => setQuery('')}
+              aria-label="검색어 지우기"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        <p className="product-list__count">{filtered.length} items</p>
+      </div>
+
+      <div className="product-list__chips" role="group" aria-label="카테고리 필터">
+        {categories.map((c) => (
+          <button
+            key={c}
+            type="button"
+            className={`product-list__chip ${category === c ? 'is-active' : ''}`}
+            aria-pressed={category === c}
+            onClick={() => setCategory(c)}
+          >
+            {formatCategoryLabel(c)}
+          </button>
+        ))}
       </div>
 
       {filtered.length === 0 ? (
@@ -65,10 +79,8 @@ export function ProductList({ products }: ProductListProps) {
         </p>
       ) : (
         <div className="product-list__grid">
-          {filtered.map((product, index) => (
-            <div key={product.id} style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}>
-              <ProductCard product={product} />
-            </div>
+          {filtered.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
