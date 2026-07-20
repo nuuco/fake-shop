@@ -273,7 +273,7 @@ fake-shop/
 |---|---|---|
 | `src/store/cartSlice.ts` | cart state·action·selector | 담기·수량·LocalStorage |
 | `src/services/productApi.ts` | API·매핑·timeout mock | loading/error 대체 |
-| `src/hooks/useAuth.ts` | Firebase 인증 | Google·listener |
+| `src/hooks/useAuth.ts` | Firebase 인증 | Google·이메일·listener |
 | `src/pages/*` | 화면 | 홈·상세·cart·login |
 | `README.md` | 제출 문서 | 템플릿 채움 |
 
@@ -337,7 +337,7 @@ React 쇼핑몰 과제를 시작합니다.
 | 번호 | 시나리오 | 기대 결과 | 실제 결과 | 통과 |
 |---:|---|---|---|:---:|
 | 1 | 최초 실행 | 인증·상품 loading | 로딩 후 목록 표시 | ☑ |
-| 2 | 로그인 성공 | 사용자 상태 | Google 로그인·이니셜 아바타·Logout 확인 | ☑ |
+| 2 | 로그인 성공 | 사용자 상태 | Google·이메일 로그인·이니셜 아바타·Logout 확인 | ☑ |
 | 3 | 로그인 실패 | 오류 안내 | 미설정 시 안내·버튼 비활성 | ☑ |
 | 4 | 로그아웃 | 비로그인 상태 | Logout 후 Login 링크 복귀 확인 | ☑ |
 | 5 | API 성공 | 상품 목록 | Fake Store 20개 표시 | ☑ |
