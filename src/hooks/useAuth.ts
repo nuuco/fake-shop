@@ -42,6 +42,7 @@ export function useAuth() {
         }
       },
       (error) => {
+        setUser(null)
         setStatus('error')
         setErrorMessage(error.message)
       },
@@ -52,7 +53,6 @@ export function useAuth() {
 
   const loginWithGoogle = useCallback(async () => {
     if (!auth) {
-      setStatus('error')
       setErrorMessage('Firebase가 설정되지 않아 로그인할 수 없습니다.')
       return
     }
@@ -60,7 +60,6 @@ export function useAuth() {
     try {
       await signInWithPopup(auth, googleProvider)
     } catch (error) {
-      setStatus('error')
       const message =
         error instanceof Error ? error.message : '로그인에 실패했습니다.'
       setErrorMessage(message)
@@ -73,7 +72,6 @@ export function useAuth() {
     try {
       await signOut(auth)
     } catch (error) {
-      setStatus('error')
       const message =
         error instanceof Error ? error.message : '로그아웃에 실패했습니다.'
       setErrorMessage(message)

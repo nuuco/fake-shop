@@ -6,5 +6,3 @@ export type Product = {
   category: string
   description: string
 }
-
-export type ProductFetchStatus = 'idle' | 'loading' | 'success' | 'error' | 'empty'

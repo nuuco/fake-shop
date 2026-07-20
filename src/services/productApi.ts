@@ -2,6 +2,7 @@ import { MOCK_PRODUCTS } from './mockProducts'
 import type { Product } from '../types/product'
 
 const ENDPOINT = 'https://fakestoreapi.com/products'
+const REQUEST_TIMEOUT_MS = 8000
 
 type ApiProduct = {
   id: number
@@ -10,6 +11,19 @@ type ApiProduct = {
   description: string
   category: string
   image: string
+}
+
+function isApiProduct(value: unknown): value is ApiProduct {
+  if (typeof value !== 'object' || value === null) return false
+  const item = value as Record<string, unknown>
+  return (
+    typeof item.id === 'number' &&
+    typeof item.title === 'string' &&
+    (typeof item.price === 'number' || typeof item.price === 'string') &&
+    typeof item.image === 'string' &&
+    typeof item.category === 'string' &&
+    typeof item.description === 'string'
+  )
 }
 
 export function mapApiProduct(raw: ApiProduct): Product {
@@ -29,12 +43,44 @@ export type FetchProductsResult = {
   errorMessage: string | null
 }
 
-export async function fetchProducts(): Promise<FetchProductsResult> {
+type FetchOptions = {
+  signal?: AbortSignal
+}
+
+function createTimeoutSignal(timeoutMs: number, external?: AbortSignal) {
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort('timeout'), timeoutMs)
+
+  const onExternalAbort = () => controller.abort(external?.reason)
+  if (external) {
+    if (external.aborted) {
+      controller.abort(external.reason)
+    } else {
+      external.addEventListener('abort', onExternalAbort, { once: true })
+    }
+  }
+
+  return {
+    signal: controller.signal,
+    cleanup: () => {
+      window.clearTimeout(timeoutId)
+      external?.removeEventListener('abort', onExternalAbort)
+    },
+    wasTimeout: () => controller.signal.reason === 'timeout',
+  }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException
+    ? error.name === 'AbortError'
+    : error instanceof Error && error.name === 'AbortError'
+}
+
+export async function fetchProducts(options: FetchOptions = {}): Promise<FetchProductsResult> {
+  const timeout = createTimeoutSignal(REQUEST_TIMEOUT_MS, options.signal)
+
   try {
-    const controller = new AbortController()
-    const timeoutId = window.setTimeout(() => controller.abort(), 8000)
-    const response = await fetch(ENDPOINT, { signal: controller.signal })
-    window.clearTimeout(timeoutId)
+    const response = await fetch(ENDPOINT, { signal: timeout.signal })
     if (!response.ok) {
       throw new Error(`상품 API 응답 오류 (${response.status})`)
     }
@@ -46,35 +92,50 @@ export async function fetchProducts(): Promise<FetchProductsResult> {
         errorMessage: null,
       }
     }
-    const products = data.map((item) => mapApiProduct(item as ApiProduct))
+    const products = data.filter(isApiProduct).map(mapApiProduct)
     return { products, fromMock: false, errorMessage: null }
   } catch (error) {
+    if (options.signal?.aborted && !timeout.wasTimeout()) {
+      throw error instanceof Error ? error : new Error('요청이 취소되었습니다.')
+    }
     const message =
-      error instanceof Error
-        ? error.name === 'AbortError'
-          ? '상품 API 요청 시간이 초과되었습니다.'
-          : error.message
-        : '상품 데이터를 불러오지 못했습니다.'
+      isAbortError(error) || timeout.wasTimeout()
+        ? '상품 API 요청 시간이 초과되었습니다.'
+        : error instanceof Error
+          ? error.message
+          : '상품 데이터를 불러오지 못했습니다.'
     return {
       products: MOCK_PRODUCTS,
       fromMock: true,
       errorMessage: message,
     }
+  } finally {
+    timeout.cleanup()
   }
 }
 
-export async function fetchProductById(id: number): Promise<Product | null> {
+export async function fetchProductById(
+  id: number,
+  options: FetchOptions = {},
+): Promise<Product | null> {
+  const timeout = createTimeoutSignal(REQUEST_TIMEOUT_MS, options.signal)
+
   try {
-    const response = await fetch(`${ENDPOINT}/${id}`)
+    const response = await fetch(`${ENDPOINT}/${id}`, { signal: timeout.signal })
     if (!response.ok) {
-      const mock = MOCK_PRODUCTS.find((p) => p.id === id)
-      return mock ?? null
+      return MOCK_PRODUCTS.find((p) => p.id === id) ?? null
     }
-    const data = (await response.json()) as ApiProduct
+    const data: unknown = await response.json()
+    if (!isApiProduct(data)) {
+      return MOCK_PRODUCTS.find((p) => p.id === id) ?? null
+    }
     return mapApiProduct(data)
-  } catch {
+  } catch (error) {
+    if (options.signal?.aborted && !timeout.wasTimeout()) {
+      throw error instanceof Error ? error : new Error('요청이 취소되었습니다.')
+    }
     return MOCK_PRODUCTS.find((p) => p.id === id) ?? null
+  } finally {
+    timeout.cleanup()
   }
 }
-
-export { ENDPOINT as PRODUCT_ENDPOINT }

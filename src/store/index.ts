@@ -7,8 +7,13 @@ export const store = configureStore({
   },
 })
 
+let previousCartItems = store.getState().cart.items
+
 store.subscribe(() => {
-  persistCart(store.getState().cart.items)
+  const nextItems = store.getState().cart.items
+  if (nextItems === previousCartItems) return
+  previousCartItems = nextItems
+  persistCart(nextItems)
 })
 
 export type RootState = ReturnType<typeof store.getState>

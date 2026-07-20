@@ -2,7 +2,22 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import type { CartItem } from '../types/cart'
 import type { Product } from '../types/product'
 
-const CART_STORAGE_KEY = 'fake-shop-cart'
+export const CART_STORAGE_KEY = 'fake-shop-cart'
+
+function isCartItem(value: unknown): value is CartItem {
+  if (typeof value !== 'object' || value === null) return false
+  const item = value as Record<string, unknown>
+  return (
+    typeof item.productId === 'number' &&
+    typeof item.title === 'string' &&
+    typeof item.price === 'number' &&
+    Number.isFinite(item.price) &&
+    typeof item.quantity === 'number' &&
+    Number.isFinite(item.quantity) &&
+    item.quantity >= 1 &&
+    typeof item.image === 'string'
+  )
+}
 
 function loadCartFromStorage(): CartItem[] {
   try {
@@ -10,23 +25,18 @@ function loadCartFromStorage(): CartItem[] {
     if (!raw) return []
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    return parsed.filter(
-      (item): item is CartItem =>
-        typeof item === 'object' &&
-        item !== null &&
-        typeof (item as CartItem).productId === 'number' &&
-        typeof (item as CartItem).title === 'string' &&
-        typeof (item as CartItem).price === 'number' &&
-        typeof (item as CartItem).quantity === 'number' &&
-        (item as CartItem).quantity >= 1,
-    )
+    return parsed.filter(isCartItem)
   } catch {
     return []
   }
 }
 
 export function persistCart(items: CartItem[]) {
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+  } catch {
+    // QuotaExceeded 등은 앱 흐름을 깨지 않도록 무시
+  }
 }
 
 type CartState = {
@@ -41,13 +51,13 @@ const initialState: CartState = {
   items: loadCartFromStorage(),
 }
 
-type AddPayload = Pick<Product, 'id' | 'title' | 'price' | 'image'>
+export type AddToCartPayload = Pick<Product, 'id' | 'title' | 'price' | 'image'>
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addItem(state, action: PayloadAction<AddPayload>) {
+    addItem(state, action: PayloadAction<AddToCartPayload>) {
       const existing = state.items.find((item) => item.productId === action.payload.id)
       if (existing) {
         existing.quantity += 1
@@ -77,13 +87,10 @@ const cartSlice = createSlice({
     removeItem(state, action: PayloadAction<number>) {
       state.items = state.items.filter((i) => i.productId !== action.payload)
     },
-    clearCart(state) {
-      state.items = []
-    },
   },
 })
 
-export const { addItem, increase, decrease, removeItem, clearCart } = cartSlice.actions
+export const { addItem, increase, decrease, removeItem } = cartSlice.actions
 export const cartReducer = cartSlice.reducer
 
 export const selectCartItems = (state: CartRootState) => state.cart.items
