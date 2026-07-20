@@ -1,64 +1,91 @@
+import { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuthContext } from '../context/AuthContext'
-import { maskEmail } from '../utils/format'
+import { BRAND_NAME } from '../constants/brand'
 import './LoginPage.css'
 
 export function LoginPage() {
   const { status, user, errorMessage, loginWithGoogle, isConfigured } = useAuthContext()
+  const [pending, setPending] = useState(false)
 
   if (status === 'loading') {
     return (
-      <section className="login">
-        <p className="state-message" role="status">
-          인증 상태를 확인하는 중입니다…
-        </p>
-      </section>
+      <div className="login-page page-container">
+        <section className="login" aria-busy="true">
+          <p className="login__eyebrow">{BRAND_NAME}</p>
+          <h1>Login</h1>
+          <p className="state-message" role="status">
+            인증 상태를 확인하는 중입니다…
+          </p>
+        </section>
+      </div>
     )
   }
 
-  if (status === 'authenticated' && user) {
+  if (user) {
     return <Navigate to="/" replace />
   }
 
-  return (
-    <section className="login">
-      <h1>로그인</h1>
-      <p className="login__lead">
-        Google 계정으로 로그인합니다. 비로그인 상태에서도 상품 열람과 장바구니를 사용할 수
-        있습니다.
-      </p>
+  const handleGoogleLogin = async () => {
+    setPending(true)
+    try {
+      await loginWithGoogle()
+    } finally {
+      setPending(false)
+    }
+  }
 
-      {!isConfigured && (
-        <div className="banner banner--warn" role="alert">
-          <p>
-            Firebase 환경 변수가 없습니다. `.env.example`을 참고해 `.env`를 만들고 개발 서버를
-            재시작하세요.
+  return (
+    <div className="login-page page-container">
+      <section className="login">
+        <div className="login__intro">
+          <p className="login__eyebrow">{BRAND_NAME}</p>
+          <h1>Login</h1>
+          <p className="login__lead">
+            Google 계정으로 간편하게 로그인하세요.
+            <br />
+            비회원으로도 상품을 보고 장바구니에 담을 수 있습니다.
           </p>
         </div>
-      )}
 
-      {isConfigured && errorMessage && (
-        <div className="banner banner--error" role="alert">
-          <p>{errorMessage}</p>
+        {!isConfigured && (
+          <div className="login__notice login__notice--warn" role="alert">
+            <p className="login__notice-title">설정이 필요합니다</p>
+            <p>
+              Firebase 환경 변수가 없습니다. <code>.env.example</code>을 참고해{' '}
+              <code>.env</code>를 만든 뒤 개발 서버를 재시작하세요.
+            </p>
+          </div>
+        )}
+
+        {isConfigured && errorMessage && (
+          <div className="login__notice login__notice--error" role="alert">
+            <p className="login__notice-title">로그인에 실패했습니다</p>
+            <p>{errorMessage}</p>
+          </div>
+        )}
+
+        <div className="login__actions">
+          <button
+            type="button"
+            className="login__google"
+            onClick={() => void handleGoogleLogin()}
+            disabled={!isConfigured || pending}
+          >
+            {pending ? 'Connecting…' : 'Continue with Google'}
+          </button>
+          <p className="login__hint">팝업이 차단되면 브라우저에서 허용해 주세요.</p>
         </div>
-      )}
 
-      <button
-        type="button"
-        className="btn btn--primary"
-        onClick={() => void loginWithGoogle()}
-        disabled={!isConfigured}
-      >
-        Google로 로그인
-      </button>
+        <ul className="login__notes">
+          <li>담아 둔 상품은 이 기기에 자동으로 기억됩니다.</li>
+          <li>로그아웃 후에도 담아 둔 상품은 유지됩니다.</li>
+        </ul>
 
-      {user && (
-        <p className="login__hint">현재 사용자: {user.displayName ?? maskEmail(user.email)}</p>
-      )}
-
-      <Link to="/" className="login__back">
-        상품 목록으로 돌아가기
-      </Link>
-    </section>
+        <Link to="/" className="login__back">
+          ← Back to shop
+        </Link>
+      </section>
+    </div>
   )
 }

@@ -1,35 +1,160 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: min(70vh, 40rem);
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
 .login {
-  max-width: 28rem;
+  width: 100%;
+  max-width: 26rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.75rem;
+  text-align: left;
   animation: fade-up 0.45s ease both;
+}
+
+.login__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.login__eyebrow {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .login h1 {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .login__lead {
   margin: 0;
   color: var(--ink-soft);
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 1.0625rem;
 }
 
-.login__back {
-  color: var(--ink-soft);
-  text-decoration: none;
+.login__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
 }
 
-.login__back:hover,
-.login__back:focus-visible {
-  color: var(--accent);
+.login__google {
+  appearance: none;
+  width: 100%;
+  padding: 1.05rem 1.25rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--ink);
+  color: #fff;
+  font: inherit;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.login__google:hover:not(:disabled),
+.login__google:focus-visible:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.login__google:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .login__hint {
   margin: 0;
+  font-size: 0.875rem;
   color: var(--muted);
-  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.login__notes {
+  margin: 0;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.login__notes li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.login__notes li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+}
+
+.login__notice {
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.login__notice p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.login__notice-title {
+  margin: 0 0 0.35rem !important;
+  font-size: 0.9375rem !important;
+  font-weight: 500;
+  color: var(--ink) !important;
+}
+
+.login__notice code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  padding: 0.05em 0.25em;
+  background: var(--accent-soft);
+}
+
+.login__back {
+  margin-top: 0.25rem;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+
+.login__back:hover,
+.login__back:focus-visible {
+  opacity: 0.5;
+}
+
+.login .state-message {
+  padding: 0.5rem 0 0;
 }
