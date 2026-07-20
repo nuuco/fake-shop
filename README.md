@@ -18,7 +18,7 @@
 ### 결과 예시와 다른 점
 
 - 참고한 기능 흐름: 상품 목록 → 담기 → 전역 cart·총액 → Firebase 로그인·로그아웃
-- 다르게 설계한 UI·기능: 브랜드명 **Tomato Market**, 유어마인드형 미니멀(크림 배경·작은 타이포·카드 없음), 검색·필터·상세·LocalStorage
+- 다르게 설계한 UI·기능: 브랜드명 **Tomato Market**, 유어마인드형 미니멀(흰 배경·큰 Inter 타이포·무카드 그리드·글라스 헤더), 검색·필터·상세·LocalStorage·모바일 아이콘 내비
 - 복제하지 않은 이미지·브랜드·문구: 결과 예시의 브랜드·레이아웃·문구를 그대로 쓰지 않음
 
 ## 2. 실행 화면
@@ -28,7 +28,7 @@
 | 상품 목록·로딩 | [screenshots/products.png](./screenshots/products.png) | Fake Store API 목록, 검색·필터, 담기 |
 | 로그인·인증 상태 | [screenshots/auth.png](./screenshots/auth.png) | Google 로그인 UI, `.env` 미설정 안내 |
 | 장바구니·총액 | [screenshots/cart.png](./screenshots/cart.png) | 수량·삭제·총액($132.25) |
-| 오류·빈 상태·선택 기능 | [screenshots/error-empty.png](./screenshots/error-empty.png) | Firebase 환경 변수 누락 오류 안내 |
+| 오류·빈 상태·선택 기능 | [screenshots/error-empty.png](./screenshots/error-empty.png) | 검색 0건 안내 |
 
 ![상품 목록](./screenshots/products.png)
 ![로그인 상태](./screenshots/auth.png)
@@ -40,7 +40,7 @@
 |---|---|---|---|
 | 데이터·상태·인증 설계 | 해당 없음(실시간 미응시) | product·cartItem·authUser 정의 | README·타입 파일에 반영 |
 | 전역 장바구니 | 해당 없음 | Redux Toolkit cartSlice 완료 | 수량·삭제·배지·총액 |
-| Firebase 인증 | 해당 없음 | Google 로그인 흐름 완료 | `.env` 설정 후 실제 로그인 가능 |
+| Firebase 인증 | 해당 없음 | Google 로그인 흐름 완료 | 실로그인·로그아웃 확인 완료 |
 | 상품 API·대체 경로 | 해당 없음 | API + 8초 timeout mock 대체 | 재시도 버튼 |
 | README·테스트 | 해당 없음 | 템플릿 §1~17 작성 | 캡처·오류·AI 기록 |
 
@@ -66,10 +66,10 @@
 |---|---|---|
 | 수량 변경 | ☑ 완료 / □ 미구현 | +/−, 1 이하 시 항목 제거 |
 | 항목 삭제 | ☑ 완료 / □ 미구현 | 다른 항목 유지 |
-| 빈 장바구니 안내 | ☑ 완료 / □ 미구현 | 0원·상품 보러 가기 |
+| 빈 장바구니 안내 | ☑ 완료 / □ 미구현 | 빈 안내 + Continue shopping |
 | API 다시 시도 | ☑ 완료 / □ 미구현 | 오류 배너 재시도 |
 | 인증 로딩 UX | ☑ 완료 / □ 미구현 | loading 중 로그인 오표시 방지 |
-| 로그인 전후 UI | ☑ 완료 / □ 미구현 | 비로그인: 로그인 버튼 / 로그인: 이름·로그아웃 |
+| 로그인 전후 UI | ☑ 완료 / □ 미구현 | 비로그인: Login / 로그인: 이니셜 아바타·Logout |
 
 추가 구현: 상품 상세(`/product/:id`) — 설명·카테고리·담기
 
@@ -138,7 +138,7 @@
 |---|---|---|---|
 | action | addItem | 담기·중복 시 수량+1 | 같은 상품 두 번 담기 |
 | action | increase / decrease | 수량 변경 | 총액 동시 변경 |
-| action | removeItem / clearCart | 삭제·전체 비우기 | 다른 항목 유지 |
+| action | removeItem | 항목 삭제 | 다른 항목 유지 |
 | selector | selectCartItems | 목록 | `/cart` |
 | selector | selectCartTotal / selectCartCount | 총액·배지 | 수기 계산 |
 
@@ -156,18 +156,18 @@
 
 - 로그인 방식: Google (`signInWithPopup`)
 - 인증 상태 관리 위치: `AuthProvider` + `useAuth` (`onAuthStateChanged` 단일 listener)
-- 로그인 성공 화면: `/`로 이동, Header에 displayName
+- 로그인 성공 화면: `/`로 이동, Header에 이니셜 아바타(호버 시 닉네임) + Logout
 - 로그인 실패 안내: 오류 배너 메시지
 - 인증 초기 로딩: 「인증 상태를 확인하는 중입니다…」
-- 로그아웃 처리: Header 로그아웃 버튼 → `signOut`
+- 로그아웃 처리: Header Logout → `signOut`
 
 ### `authUser`
 
 | 필드 | 사용 | 화면 표시 | 개인정보 보호 |
 |---|:---:|:---:|---|
 | uid | ☑ | □ | 화면·캡처 미노출 |
-| displayName | ☑ | ☑ | 없으면 email 마스킹 |
-| email | ☑ | △ | `ab***@domain` 마스킹 |
+| displayName | ☑ | △ | 이니셜만 표시, 툴팁·aria로 전체 이름 |
+| email | ☑ | △ | displayName 없을 때 마스킹해 툴팁 |
 | photoURL | ☑ | □ | 미표시 |
 
 ### 인증 흐름
@@ -247,6 +247,7 @@ fake-shop/
 ├─ AGENTS.md
 ├─ package.json
 ├─ .env.example
+├─ public/favicon.svg
 ├─ screenshots/
 │  ├─ products.png
 │  ├─ auth.png
@@ -256,6 +257,7 @@ fake-shop/
    ├─ main.tsx
    ├─ App.tsx
    ├─ index.css
+   ├─ constants/brand.ts
    ├─ types/
    ├─ store/
    │  ├─ index.ts
@@ -269,7 +271,9 @@ fake-shop/
    ├─ context/AuthContext.tsx
    ├─ components/
    ├─ pages/
-   └─ utils/format.ts
+   └─ utils/
+      ├─ format.ts
+      └─ image.ts
 ```
 
 | 파일·폴더 | 역할 | 내가 수정한 내용 |
@@ -328,7 +332,7 @@ React 쇼핑몰 과제를 시작합니다.
 |---|---|---|
 | 전역 상태 사용 | ☑ 통과 / □ 보완 | - |
 | action·reducer·selector | ☑ 통과 / □ 보완 | RootState 순환 import 제거 |
-| Firebase 실제 인증 | □ 통과 / ☑ 보완 | 로컬 `.env` 설정 후 실로그인 확인 필요 |
+| Firebase 실제 인증 | ☑ 통과 / □ 보완 | 실로그인·로그아웃 확인 |
 | 인증 초기·오류·로그아웃 | ☑ 통과 / □ 보완 | 미설정 시 안내 표시 |
 | API loading·error·empty | ☑ 통과 / □ 보완 | timeout mock 추가 |
 | 총액·수량 | ☑ 통과 / □ 보완 | 109.95+22.30=132.25 확인 |
@@ -340,9 +344,9 @@ React 쇼핑몰 과제를 시작합니다.
 | 번호 | 시나리오 | 기대 결과 | 실제 결과 | 통과 |
 |---:|---|---|---|:---:|
 | 1 | 최초 실행 | 인증·상품 loading | 로딩 후 목록 표시 | ☑ |
-| 2 | 로그인 성공 | 사용자 상태 | `.env` 설정 후 확인 필요 | ☐ |
+| 2 | 로그인 성공 | 사용자 상태 | Google 로그인·이니셜 아바타·Logout 확인 | ☑ |
 | 3 | 로그인 실패 | 오류 안내 | 미설정 시 안내·버튼 비활성 | ☑ |
-| 4 | 로그아웃 | 비로그인 상태 | 코드 경로 구현(실계정 후 확인) | ☐ |
+| 4 | 로그아웃 | 비로그인 상태 | Logout 후 Login 링크 복귀 확인 | ☑ |
 | 5 | API 성공 | 상품 목록 | Fake Store 20개 표시 | ☑ |
 | 6 | API 실패·대체 | 오류·mock | timeout/ mock 경로 구현 | ☑ |
 | 7 | 상품 2개 담기 | cart·total 일치 | $132.25 | ☑ |
@@ -373,7 +377,7 @@ React 쇼핑몰 과제를 시작합니다.
 |---|---|---|
 | Fake Store API | https://fakestoreapi.com/products | 상품 데이터 실습 |
 | 결과 예시 | https://drive.google.com/file/d/1fUeCYpSu0H_BU154iN7t1IHM37cDo6mz/view?usp=sharing | 기능 흐름 참고 |
-| Google Fonts | Noto Sans KR | UI 타이포 |
+| Google Fonts | Inter, Noto Sans KR | UI 타이포 |
 
 ## 16. 배운 점·한계·다음 개선
 
@@ -390,14 +394,14 @@ React 쇼핑몰 과제를 시작합니다.
 
 ### 알려진 문제
 
-- 미완료 기능: Firebase `.env` 없이는 실제 Google 로그인 불가
+- 미완료 기능: (없음 — 필수·권장·도전 구현 완료)
 - 다른 환경 문제: Fake Store API가 느리거나 차단되면 mock으로 전환
-- Firebase 설정 주의: Authorized domains에 localhost, Web API key만 사용
+- Firebase 설정 주의: Authorized domains에 localhost(및 배포 도메인), Web API key만 사용
 
 | 한계 | 원인 | 다음 개선 | 우선순위 |
 |---|---|---|---|
 | 사용자별 cart 클라우드 미동기화 | 과제상 실저장 비필수 | 아래 Firestore 설계 구현 | 중 |
-| 실로그인 미캡처 | `.env` 미투입 | 로컬 설정 후 재캡처 | 상 |
+| 배포 후 Google 로그인 | Authorized domains 미추가 시 실패 | Firebase에 `tomato-market-one.vercel.app` 등록 | 상 |
 
 ### 사용자별 cart 저장 설계(도전·미구현)
 
@@ -414,5 +418,5 @@ React 쇼핑몰 과제를 시작합니다.
 | 항목 | 링크·설명 |
 |---|---|
 | 결과물 레포 URL | https://github.com/nuuco/fake-shop |
-| 실행·배포 URL | (로컬 `npm run dev` / 배포 시 기입) |
+| 실행·배포 URL | https://tomato-market-one.vercel.app/ |
 | 제출 폼 | https://goor.me/aiswwork1 |
