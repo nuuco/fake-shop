@@ -1,0 +1,23 @@
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-list__filters {
+  display: grid;
+  grid-template-columns: 1fr minmax(10rem, 14rem);
+  gap: 1rem;
+}
+
+.product-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .product-list__filters {
+    grid-template-columns: 1fr;
+  }
+}
