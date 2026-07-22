@@ -416,7 +416,7 @@ React 쇼핑몰 과제를 시작합니다.
 
 1. 장바구니는 DB가 아니라 Redux 전역 상태이며, 새로고침 유지는 LocalStorage로 분리한다.
 2. Firebase Auth와 cart 상태를 결합하지 않고 listener·store 소유 위치를 나눈다.
-3. API 실패를 UI에서 멈추지 않고 mock·재시도로 이어가게 하는 것이 과제 핵심이다.
+3. API 실패를 UI에서 멈추지 않고 mock·재시도로 이어가게 처리.
 
 ### JavaScript 또는 TypeScript
 
