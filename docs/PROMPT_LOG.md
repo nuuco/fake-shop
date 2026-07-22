@@ -67,10 +67,10 @@ Firebase .env 연결해. Google 로그인 실사용 가이드 적어.
 
 ```
 Tomato Market으로 가고, 흰 배경·큰 타이포·무카드 그리드로 맞춰.
-Toss 블루나 카톡 귀여운 톤은 빼.
+과한 포인트 컬러나 귀여운 톤은 빼.
 ```
 
-> 의도/반영: Inter+Noto Sans KR, 글라스 헤더, 모바일 아이콘 내비. Toss/카톡 톤 기각.
+> 의도/반영: Inter+Noto Sans KR, 글라스 헤더, 모바일 아이콘 내비. 장식적 톤 기각.
 
 ---
 
@@ -123,10 +123,9 @@ README 템플릿 §1~17 채워. 스크린샷 최신 UI로 맞춰.
 ```
 피드백 기준으로 보완해. 구조 설계·AI 협업·오류·보안 증거를 docs로 나눠 적어.
 트러블슈팅은 문서 하나로 이슈를 다 넣어.
-다른 프로젝트 이름이나 참고했다는 말은 넣지 마.
 ```
 
-> 의도/반영: `docs/01~09`·`PROMPT_LOG` 신설, README 링크, `.env.*` gitignore. (본 로그는 제출용 형식으로 재정리)
+> 의도/반영: `docs/01~09`·`PROMPT_LOG` 신설, README 링크, `.env.*` gitignore.
 
 ---
 
@@ -135,5 +134,5 @@ README 템플릿 §1~17 채워. 스크린샷 최신 UI로 맞춰.
 | 구분 | 내용 |
 |---|---|
 | 채택 | RTK cart, Context auth, API+mock fallback, Tomato Market, Google+이메일 Auth |
-| 기각 | 결과 예시 UI 복제, Firestore 실구현, 결제, NUUCO/Toss/카톡 톤 |
+| 기각 | 결과 예시 UI 복제, Firestore 실구현, 결제, 장식적·귀여운 UI 톤 |
 | 사람 확정 | 게스트 cart 유지, total은 selector, SPA rewrite, docs 체계 |
