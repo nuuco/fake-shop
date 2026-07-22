@@ -28,3 +28,4 @@
 - 이메일/비밀번호 로그인·회원가입: Firebase Auth + 폼 검증(빨간 안내·연두 체크)
 - 스크린샷 교체: 사용자 캡처로 products/auth/cart/error-empty 갱신, README 하단 테이블 인라인 표시
 - README 최신화: 이메일 로그인·계산하기·담기 미리보기 등 최신 기능 반영
+- docs 정합: empty/auth 로딩/빈 cart 문구를 실제 UI에 맞게 수정, README·docs 교차 링크 보강
