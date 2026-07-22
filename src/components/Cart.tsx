@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   clearCart,
@@ -18,10 +19,38 @@ export function Cart() {
   const total = useAppSelector(selectCartTotal)
   const count = useAppSelector(selectCartCount)
   const dispatch = useAppDispatch()
+  const [checkoutToast, setCheckoutToast] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!checkoutToast) return
+    const timer = window.setTimeout(() => setCheckoutToast(null), 4000)
+    return () => window.clearTimeout(timer)
+  }, [checkoutToast])
+
+  function handleCheckout() {
+    const settledTotal = formatPrice(total)
+    dispatch(clearCart())
+    setCheckoutToast(`계산이 완료되었습니다. 합계 ${settledTotal}`)
+  }
+
+  const toast = checkoutToast ? (
+    <div className="cart__toast" role="status" aria-live="polite">
+      <p>{checkoutToast}</p>
+      <button
+        type="button"
+        className="cart__toast-close"
+        onClick={() => setCheckoutToast(null)}
+        aria-label="알림 닫기"
+      >
+        ×
+      </button>
+    </div>
+  ) : null
 
   if (items.length === 0) {
     return (
       <section className="cart cart--empty">
+        {toast}
         <header className="cart__header">
           <h1>Cart</h1>
           <p className="cart__meta">0 items</p>
@@ -39,6 +68,7 @@ export function Cart() {
 
   return (
     <section className="cart">
+      {toast}
       <header className="cart__header">
         <h1>Cart</h1>
         <p className="cart__meta">
@@ -113,7 +143,7 @@ export function Cart() {
           <button
             type="button"
             className="btn btn--primary cart__checkout"
-            onClick={() => dispatch(clearCart())}
+            onClick={handleCheckout}
           >
             계산하기
           </button>
