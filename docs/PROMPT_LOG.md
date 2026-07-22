@@ -1,81 +1,142 @@
-# Tomato Market · PROMPT_LOG
+# AI 프롬프트 사용 기록
 
-> 바이브 코딩 상세 로그. 인덱스: [03_프롬프트기록.md](./03_프롬프트기록.md)
-
-## 원칙
-
-1. **사람이 먼저** `product` / `cartItem` / `authUser`와 정책을 정한다.
-2. AI에는 **기능 단위**로 프롬프트를 주고, 결과를 검토·수정한다.
-3. 결과 예시 UI·문구 **복제 금지**. 기능·데이터·상태·인증 흐름 우선.
+과제 제출용 AI 활용 로그입니다.  
+도구는 Cursor(Composer)입니다. 사람이 `product` / `cartItem` / `authUser`와 정책을 먼저 정한 뒤, 기능 단위로 요청했습니다.
 
 ---
 
-## 1. 과제 파악 (코드 금지)
+## 기본 구현 프롬프트
 
-```text
-React 쇼핑몰 과제를 시작합니다.
-공식 요구사항: React, Redux Toolkit, Firebase Authentication, Fake Store API, TypeScript 선택
-제외: 결제·주문·배송·회원 등급·실제 개인정보
-요청: 필수·권장·도전 구분, 데이터·상태·인증·API·UI 순서, 아직 코드 작성 금지
+### 프롬프트 1: 장바구니 Redux 기능 단위 구현
+
+**요청 내용:**
+
+```
+확정한 장바구니 설계를 Redux Toolkit으로 기능 단위 구현해.
+순서: store → Provider → cart slice → add → selectors → 수량·삭제.
+total은 selector로 계산해. LocalStorage 동기화해.
+전체 재작성 금지. 단계별 변경해.
 ```
 
-**결정:** Google Auth 채택, 게스트 cart 허용, Firestore cart는 설계만. (이후 이메일/비밀번호 로그인·가입 추가)
+**적용 결과:**
+- `cartSlice` · `configureStore` · `selectCartTotal`(price × quantity)
+- `addItem` / `increase` / `decrease` / `removeItem` / `clearCart`
 
 ---
 
-## 2. 저장 계층 정리 후 구현 위임
+### 프롬프트 2: API · Auth · 화면 통합
 
-**질문 요지:** 「Redux는 DB인가?」
+**요청 내용:**
+- Fake Store API 연동해. 실패·timeout 시 mock으로 대체하고 loading/error/empty·재시도 처리해.
+- Firebase Google 로그인·초기 loading·오류·로그아웃 붙여.
+- 홈·상세·cart·login 라우팅과 Header 배지까지 연결해.
 
-**정리 결과**
+**적용 결과:**
+- `productApi` 8초 Abort + `MOCK_PRODUCTS`
+- `useAuth` + `AuthContext` + Login/Header
+- 필수·권장·도전 골격 완료
 
-| 계층 | 역할 |
-|---|---|
-| Redux | 런타임 전역 cart |
-| LocalStorage | 새로고침 유지 |
-| Firestore | 사용자별 sync (미구현·설계만) |
+---
 
-```text
-확정한 장바구니 설계를 Redux Toolkit으로 기능 단위 구현해줘.
-순서: store → Provider → cart slice → add → selectors → 수량·삭제
-조건: 단계별 변경, total은 selector, LocalStorage 동기화, 전체 재작성 금지
+## 추가 개선 프롬프트
+
+---
+
+- 프롬프트:
+
+```
+Firebase .env 연결해. Google 로그인 실사용 가이드 적어.
+콘솔에 COOP / window.closed 경고가 뜨는데 치명인지 알려줘.
 ```
 
-**적용:** `src/store/cartSlice.ts`, `src/store/index.ts`, `selectCartTotal = price × quantity`
+> 의도/반영: `VITE_FIREBASE_*` · Authorized domains. popup COOP는 치명 아님, Header 표시로 성공 판별. 상세는 docs/09 §4.
 
 ---
 
-## 3. 브랜드 — 설계 승인 후 코딩
+- 프롬프트:
 
-```text
-nuuco 쓰지 말고… 아직 코드 수정하지 말고 어떻게 할지 알려줘
+```
+사이드이펙트 리팩토링해. fetch abort, LocalStorage 안전화, auth status, dead code 정리해.
 ```
 
-| 안 | 결과 |
-|---|---|
-| NUUCO | ❌ 기각 |
-| Forma Market | ➖ 중간안 |
-| Tomato Market + 유어마인드형 | ✅ 채택 |
-| Toss 블루 / 카톡 귀여움 | ❌ 기각 |
+> 의도/반영: unmount abort, cart 참조 변경 시에만 persist+try/catch, `onAuthStateChanged`만 status 갱신. docs/09 §3.
 
 ---
 
-## 4. 결과 예시 동작 명세
+- 프롬프트:
 
-Drive 링크는 열지 못하고, 자연어로 명세:
+```
+브랜드에 nuuco 쓰지 마. 아직 코드 수정하지 말고 어떻게 할지 먼저 알려줘.
+```
 
-- 상세 담기 → 문구 변경·장바구니 이동
-- 헤더 담기 미리보기
-- 계산하기 = `clearCart`
-
-**적용:** `ProductDetailPage`, `Header`, `Cart`
+> 의도/반영: Forma Market 제안 → 이후 Tomato Market으로 확정. 설계 승인 후 코딩.
 
 ---
 
-## 5. 배포·피드백 docs
+- 프롬프트:
 
-- Vercel 배포 후 `/cart`·`/login` 새로고침 404 → `vercel.json` rewrite ([09](./09_트러블슈팅.md))
-- 피드백: 구조→AI→검증 증거 부족 → docs/01~09 체계 구축
+```
+Tomato Market으로 가고, 유어마인드처럼 흰 배경·큰 타이포·무카드 그리드로 맞춰.
+Toss 블루나 카톡 귀여운 톤은 빼.
+```
+
+> 의도/반영: Inter+Noto Sans KR, 글라스 헤더, 모바일 아이콘 내비. Toss/카톡 톤 기각.
+
+---
+
+- 프롬프트:
+
+```
+Vercel에 배포해. /cart·/login 새로고침하면 404 나. 고쳐.
+```
+
+> 의도/반영: `vercel.json` rewrite → `index.html`. 배포 URL `tomato-market-one.vercel.app`. docs/09 §5.
+
+---
+
+- 프롬프트:
+
+```
+결과 예시처럼 동작하게 해.
+상세에서 담으면 문구 바꾸고 장바구니로 가게 해.
+헤더에 담기 미리보기 넣어.
+계산하기는 cart 비우기로 해.
+```
+
+> 의도/반영: `ProductDetailPage` 담기 상태, `Header` lastAdded, `Cart` `clearCart`.
+
+---
+
+- 프롬프트:
+
+```
+이메일·비밀번호 로그인·회원가입도 추가해.
+입력 검증은 틀리면 빨간 안내, 맞으면 연두 체크 보여줘.
+```
+
+> 의도/반영: Firebase email/password + LoginPage 폼 검증 UX.
+
+---
+
+- 프롬프트:
+
+```
+README 템플릿 §1~17 채워. 스크린샷 최신 UI로 맞춰.
+```
+
+> 의도/반영: README 제출면 작성, `screenshots/` 4장 연결.
+
+---
+
+- 프롬프트:
+
+```
+피드백 기준으로 보완해. 구조 설계·AI 협업·오류·보안 증거를 docs로 나눠 적어.
+트러블슈팅은 문서 하나로 이슈를 다 넣어.
+다른 프로젝트 이름이나 참고했다는 말은 넣지 마.
+```
+
+> 의도/반영: `docs/01~09`·`PROMPT_LOG` 신설, README 링크, `.env.*` gitignore. (본 로그는 제출용 형식으로 재정리)
 
 ---
 
@@ -83,6 +144,6 @@ Drive 링크는 열지 못하고, 자연어로 명세:
 
 | 구분 | 내용 |
 |---|---|
-| 채택 | RTK cart, Context auth, mock fallback, Tomato Market, 이메일+Google Auth |
-| 기각 | 결과 예시 UI 복제, Firestore 실구현, 결제, Toss/카톡 톤 |
-| 사람 수정 | 게스트 cart 유지, `.env` 미설정 UX, 순환 import 제거, SPA rewrite |
+| 채택 | RTK cart, Context auth, API+mock fallback, Tomato Market, Google+이메일 Auth |
+| 기각 | 결과 예시 UI 복제, Firestore 실구현, 결제, NUUCO/Toss/카톡 톤 |
+| 사람 확정 | 게스트 cart 유지, total은 selector, SPA rewrite, docs 체계 |
